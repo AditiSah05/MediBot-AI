@@ -1,0 +1,6 @@
+flask
+sentence-transformers
+pypdf
+tqdm>=4.64.0
+setuptools>=67.6.1
+-e .

@@ -1,0 +1,100 @@
+/* Additional CSS for MediBot - Medical Chatbot */
+/* The main styling is now embedded in the HTML template */
+
+/* Custom medical-themed colors and utilities */
+:root {
+    --medical-primary: #2c5aa0;
+    --medical-secondary: #4a90e2;
+    --medical-success: #28a745;
+    --medical-danger: #dc3545;
+    --medical-warning: #ffc107;
+    --medical-info: #17a2b8;
+}
+
+/* Additional responsive utilities */
+@media (max-width: 480px) {
+    .chat-container {
+        margin: 5px;
+        height: 98vh;
+        border-radius: 10px;
+    }
+    
+    .chat-header {
+        padding: 10px 15px;
+    }
+    
+    .bot-info h3 {
+        font-size: 1.1rem;
+    }
+    
+    .suggestion-btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+}
+
+/* Print styles for medical information */
+@media print {
+    .chat-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .chat-header,
+    .chat-footer,
+    .emergency-banner {
+        display: none;
+    }
+    
+    .message.user {
+        display: none;
+    }
+    
+    .message.bot .message-content {
+        border: none;
+        box-shadow: none;
+        margin-bottom: 20px;
+    }
+}
+
+/* Accessibility improvements */
+.message-content:focus,
+.suggestion-btn:focus,
+.send-button:focus,
+.message-input:focus {
+    outline: 2px solid var(--medical-primary);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .chat-container {
+        border: 2px solid #000;
+    }
+    
+    .message.bot .message-content {
+        border: 2px solid #000;
+    }
+    
+    .message.user .message-content {
+        background: #000;
+        color: #fff;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .message,
+    .typing-dot,
+    .status-indicator,
+    .send-button,
+    .suggestion-btn {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+    /* Dark mode styles can be added here if needed */
+}

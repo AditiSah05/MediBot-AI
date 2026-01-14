@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "medibot-ai"
+version = "2.0.0"
+description = "Comprehensive Medical Information Chatbot"
+authors = [
+    {name = "Aditi Sah"}
+]
+dependencies = [
+    "flask>=2.3.0",
+    "sentence-transformers>=5.2.0",
+    "pypdf>=6.6.0",
+    "torch>=1.11.0",
+    "transformers>=4.41.0"
+]
+
+[project.scripts]
+app = "app:main"
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
