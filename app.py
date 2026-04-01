@@ -3,9 +3,26 @@ import os
 import re
 import html
 import secrets
+import time
+from collections import defaultdict
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+app.permanent_session_lifetime = 7200  # 2 hours
+
+# Simple in-memory rate limiter: max 20 requests per minute per IP
+_rate_store = defaultdict(list)
+RATE_LIMIT = 20
+RATE_WINDOW = 60
+
+def is_rate_limited(ip):
+    now = time.time()
+    timestamps = _rate_store[ip]
+    _rate_store[ip] = [t for t in timestamps if now - t < RATE_WINDOW]
+    if len(_rate_store[ip]) >= RATE_LIMIT:
+        return True
+    _rate_store[ip].append(now)
+    return False
 
 # Comprehensive medical knowledge base with extensive health information
 medical_responses = {
@@ -23,8 +40,8 @@ medical_responses = {
 
     # Cardiovascular Conditions
     "hypertension": "High blood pressure (≥130/80 mmHg) increases risk of heart disease and stroke. Often asymptomatic. Management: DASH diet, regular exercise, weight management, limit sodium and alcohol, stress reduction, medications as prescribed. Regular monitoring essential.",
-    "heart attack": "Myocardial infarction occurs when blood flow to heart muscle is blocked. Symptoms: chest pain/pressure, shortness of breath, nausea, sweating, pain radiating to arm/jaw. EMERGENCY: Call 911 immediately. Treatment: Aspirin, medications to restore blood flow, lifestyle changes.",
-    "stroke": "Brain attack when blood supply to brain is interrupted. Symptoms (FAST): Face drooping, Arm weakness, Speech difficulty, Time to call 911. Risk factors: high blood pressure, diabetes, smoking, atrial fibrillation. Prevention: control risk factors, healthy lifestyle.",
+    "heart attack": "Myocardial infarction occurs when blood flow to heart muscle is blocked. Symptoms: chest pain/pressure, shortness of breath, nausea, sweating, pain radiating to arm/jaw. EMERGENCY: Call 102 immediately. Treatment: Aspirin, medications to restore blood flow, lifestyle changes.",
+    "stroke": "Brain attack when blood supply to brain is interrupted. Symptoms (FAST): Face drooping, Arm weakness, Speech difficulty, Time to call 102. Risk factors: high blood pressure, diabetes, smoking, atrial fibrillation. Prevention: control risk factors, healthy lifestyle.",
     "cholesterol": "Waxy substance in blood. High levels increase heart disease risk. LDL (bad) should be <100 mg/dL, HDL (good) should be >40 mg/dL men, >50 mg/dL women. Management: heart-healthy diet, exercise, weight control, medications if needed.",
     "heart failure": "Condition where heart can't pump blood effectively. Symptoms: shortness of breath, fatigue, swelling in legs/ankles, rapid heartbeat. Treatment: ACE inhibitors, beta-blockers, diuretics, lifestyle changes, device therapy in severe cases.",
     "arrhythmia": "Irregular heartbeat patterns. Types: atrial fibrillation, tachycardia, bradycardia. Symptoms: palpitations, dizziness, chest pain, shortness of breath. Treatment: Medications, cardioversion, ablation, pacemaker/defibrillator for severe cases.",
@@ -99,7 +116,7 @@ medical_responses = {
 
     # Neurological Conditions
     "migraine": "Severe headache with throbbing pain, often one-sided. Symptoms: nausea, vomiting, light/sound sensitivity. Triggers: stress, hormones, foods, weather changes. Treatment: pain medications, preventive medications, lifestyle modifications.",
-    "epilepsy": "Neurological disorder causing recurrent seizures. Types: focal, generalized seizures. Treatment: anti-seizure medications, lifestyle modifications, surgery for drug-resistant cases. Seizure first aid: protect from injury, time seizure, call 911 if prolonged.",
+    "epilepsy": "Neurological disorder causing recurrent seizures. Types: focal, generalized seizures. Treatment: anti-seizure medications, lifestyle modifications, surgery for drug-resistant cases. Seizure first aid: protect from injury, time seizure, call 102 if prolonged.",
     "alzheimer": "Progressive brain disorder causing memory loss and cognitive decline. Symptoms: memory problems, confusion, difficulty with daily tasks. Treatment: medications to slow progression, supportive care, safety modifications.",
     "parkinson": "Progressive nervous system disorder affecting movement. Symptoms: tremor, stiffness, slow movement, balance problems. Treatment: medications (levodopa), physical therapy, deep brain stimulation for advanced cases.",
 
@@ -137,7 +154,7 @@ medical_responses = {
 
     # Emergency Conditions
     "chest pain": "Can indicate heart attack, especially with shortness of breath, nausea, sweating. Other causes: muscle strain, acid reflux, anxiety. SEEK IMMEDIATE CARE for severe, crushing chest pain or if you suspect heart attack.",
-    "allergic reaction": "Immune system response to allergens. Mild: rash, itching. Severe (anaphylaxis): difficulty breathing, swelling, rapid pulse. EMERGENCY for anaphylaxis - use epinephrine, call 911. Avoid known allergens.",
+    "allergic reaction": "Immune system response to allergens. Mild: rash, itching. Severe (anaphylaxis): difficulty breathing, swelling, rapid pulse. EMERGENCY for anaphylaxis - use epinephrine, call 102. Avoid known allergens.",
     "concussion": "Mild traumatic brain injury from head impact. Symptoms: headache, confusion, dizziness, nausea, memory problems. Treatment: rest, gradual return to activities, avoid further head trauma. Seek care for worsening symptoms.",
     "burns": "Tissue damage from heat, chemicals, electricity. First-degree: red, painful. Second-degree: blisters. Third-degree: deep tissue damage. Treatment: cool water, pain relief, medical care for severe burns, tetanus shot if needed.",
 
@@ -326,8 +343,8 @@ medical_responses = {
     "prostate cancer": "Common cancer in men, usually slow-growing. Symptoms: urinary problems, blood in urine/semen, pelvic pain. Risk factors: age, race, family history. Screening: PSA test, digital rectal exam. Treatment: active surveillance, surgery, radiation, hormone therapy.",
     "colorectal cancer": "Cancer of colon or rectum. Symptoms: changes in bowel habits, blood in stool, abdominal pain, weight loss. Risk factors: age, family history, inflammatory bowel disease, diet. Screening: colonoscopy starting age 45-50. Treatment: surgery, chemotherapy, radiation.",
     
-    "first aid": "Immediate care for injuries or sudden illness. Basic skills: CPR, choking relief (Heimlich maneuver), bleeding control, burn treatment, fracture immobilization. Emergency supplies: bandages, antiseptic, pain relievers, emergency numbers. Training recommended for everyone. Call 911 for serious emergencies.",
-    "cpr": "Cardiopulmonary resuscitation for cardiac arrest. Steps: check responsiveness, call 911, chest compressions (30), rescue breaths (2), repeat. Compression rate: 100-120 per minute, depth: 2 inches. AED use if available. Hands-only CPR acceptable if untrained in rescue breathing.",
+    "first aid": "Immediate care for injuries or sudden illness. Basic skills: CPR, choking relief (Heimlich maneuver), bleeding control, burn treatment, fracture immobilization. Emergency supplies: bandages, antiseptic, pain relievers, emergency numbers. Training recommended for everyone. Call 102 for serious emergencies.",
+    "cpr": "Cardiopulmonary resuscitation for cardiac arrest. Steps: check responsiveness, call 102, chest compressions (30), rescue breaths (2), repeat. Compression rate: 100-120 per minute, depth: 2 inches. AED use if available. Hands-only CPR acceptable if untrained in rescue breathing.",
     "choking": "Airway obstruction preventing breathing. Signs: inability to speak/cough, clutching throat, blue skin. Treatment: Heimlich maneuver (abdominal thrusts), back blows for infants. If unconscious, begin CPR. Prevention: cut food into small pieces, supervise children, avoid talking while eating."
 }
 
@@ -372,11 +389,11 @@ def get_medical_response(user_input):
 • **Stay up to date with vaccinations**"""
 
     # First aid and emergency queries
-    emergency_keywords = ["first aid", "cpr", "choking", "emergency", "urgent", "911", "ambulance"]
+    emergency_keywords = ["first aid", "cpr", "choking", "emergency", "urgent", "102", "ambulance"]
     if any(keyword in user_input for keyword in emergency_keywords):
         return """**EMERGENCY & FIRST AID INFORMATION:**
 
-**🚨 CALL 911 IMMEDIATELY FOR:**
+**🚨 CALL 102 IMMEDIATELY FOR:**
 • **Cardiac Arrest**: No pulse, not breathing, unconscious
 • **Severe Bleeding**: Uncontrolled, spurting, or large amounts
 • **Choking**: Cannot speak, cough, or breathe
@@ -390,7 +407,7 @@ def get_medical_response(user_input):
 
 **🫁 CPR (Cardiopulmonary Resuscitation):**
 1. **Check Responsiveness**: Tap shoulders, shout "Are you okay?"
-2. **Call 911**: Get help and AED if available
+2. **Call 102**: Get help and AED if available
 3. **Position**: Place on firm surface, tilt head back, lift chin
 4. **Hand Placement**: Center of chest between nipples
 5. **Compressions**: 30 compressions, 100-120 per minute, 2 inches deep
@@ -454,7 +471,7 @@ def get_medical_response(user_input):
 • First aid manual
 
 **📞 EMERGENCY NUMBERS:**
-• **911**: Emergency services (US)
+• **102**: Emergency services (US)
 • **Poison Control**: 1-800-222-1222
 • **Crisis Text Line**: Text HOME to 741741
 • **Suicide Prevention**: 988
@@ -853,7 +870,7 @@ Please ask about a specific condition or health topic for detailed information."
     if any(word in user_input for word in ["symptoms", "symptom", "signs"]):
         return """**When to Seek Medical Care:**
 
-**Seek immediate care (911) for:**
+**Seek immediate care (102) for:**
 • Chest pain with breathing difficulty
 • Severe allergic reactions
 • Signs of stroke or heart attack
@@ -907,7 +924,7 @@ I can provide detailed information about:
 • CPR and choking relief procedures
 • Bleeding control and wound care
 • Burn treatment and fracture care
-• When to call 911
+• When to call 102
 • Basic first aid techniques
 
 **🛡️ PREVENTIVE CARE**
@@ -926,16 +943,16 @@ I can provide detailed information about:
 • "What are the symptoms of diabetes?"
 • "How do I treat a burn?"
 • "Vaccination schedule for adults"
-• "When should I call 911?"
+• "When should I call 102?"
 • "Drug interactions with blood thinners"
 • "Depression treatment options"
 • "First aid for choking"
 
 **🚨 EMERGENCY DISCLAIMER:**
-For life-threatening emergencies, call 911 immediately. This chatbot provides educational information only and cannot replace professional medical care.
+For life-threatening emergencies, call 102 immediately. This chatbot provides educational information only and cannot replace professional medical care.
 
 **📞 CRISIS RESOURCES:**
-• Emergency: 911
+• Emergency: 102
 • Poison Control: 1-800-222-1222
 • Suicide Prevention: 988
 • Crisis Text: Text HOME to 741741
@@ -948,21 +965,21 @@ def index():
 
 @app.route("/chat")
 def chat_page():
+    session.permanent = True
     return render_template('chat.html')
 
 @app.route("/get", methods=["GET", "POST"])
 def chat():
+    if is_rate_limited(request.remote_addr):
+        return "Too many requests. Please wait a moment.", 429
+
     msg = request.form.get("msg", "").strip()
     if not msg:
         return "Please enter a message.", 400
 
-    # Sanitize input
     msg = html.escape(msg)[:500]
-
-    # Get medical response
     response = get_medical_response(msg)
 
-    # Store in session history
     if 'history' not in session:
         session['history'] = []
     session['history'].append({'role': 'user', 'text': msg})
@@ -980,9 +997,26 @@ def clear_history():
     session.pop('history', None)
     return jsonify({'status': 'ok'})
 
+@app.route("/search", methods=["GET"])
+def search_topics():
+    q = request.args.get("q", "").strip().lower()
+    if not q or len(q) < 2:
+        return jsonify([])
+    results = [k for k in medical_responses if q in k.lower()][:8]
+    return jsonify(results)
+
 @app.route("/health")
 def health():
     return jsonify({'status': 'ok', 'conditions': len(medical_responses)})
 
+@app.route("/robots.txt")
+def robots():
+    return app.send_static_file('robots.txt') if os.path.exists('static/robots.txt') else ('', 204)
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('404.html'), 404
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port, debug=False)

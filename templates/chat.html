@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediBot</title>
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="MediBot — Ask about symptoms, conditions, medications, and more. Get clear, reliable health information instantly.">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="/static/style.css" media="print">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -85,6 +90,39 @@
             color: #18181b;
             border-color: #d1d5db;
         }
+
+        /* Search bar */
+        .search-bar {
+            display: none;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 8px 20px;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .search-bar.open { display: flex; }
+        .search-input {
+            flex: 1;
+            border: 1px solid #e5e5e5;
+            border-radius: 7px;
+            padding: 6px 12px;
+            font-size: 0.83rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            background: #f7f7f8;
+            color: #1a1a1a;
+            transition: border-color 0.15s;
+        }
+        .search-input:focus { border-color: #18181b; background: #fff; }
+        .search-meta { font-size: 0.75rem; color: #9ca3af; white-space: nowrap; }
+        .search-close {
+            background: none; border: none; cursor: pointer;
+            color: #9ca3af; font-size: 14px; padding: 4px;
+            transition: color 0.15s;
+        }
+        .search-close:hover { color: #18181b; }
+        .bubble.highlight { background: #fef9c3 !important; border-color: #fde047 !important; }
 
         /* Emergency strip */
         .emergency-strip {
@@ -297,6 +335,33 @@
             30% { transform: translateY(-6px); }
         }
 
+        /* Autocomplete */
+        .autocomplete {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 0; right: 0;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            overflow: hidden;
+            z-index: 50;
+            display: none;
+        }
+        .autocomplete.open { display: block; }
+        .ac-item {
+            padding: 9px 14px;
+            font-size: 0.83rem;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.1s;
+        }
+        .ac-item:hover, .ac-item.active { background: #f4f4f5; }
+        .ac-item i { color: #9ca3af; font-size: 0.75rem; }
+
         /* Input area */
         .input-area {
             background: #fff;
@@ -374,6 +439,61 @@
         .send-btn:hover:not(:disabled) { background: #374151; }
         .send-btn:disabled { background: #d1d5db; cursor: not-allowed; }
 
+        /* Follow-up chips */
+        .followup-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 4px 0 8px 46px;
+        }
+        .followup-chip {
+            background: #f4f4f5;
+            border: 1px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 5px 12px;
+            font-size: 0.76rem;
+            color: #374151;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+        }
+        .followup-chip:hover {
+            background: #18181b;
+            color: #fff;
+            border-color: #18181b;
+        }
+
+        /* Language selector */
+        .lang-select {
+            background: none;
+            border: 1px solid #e5e5e5;
+            border-radius: 7px;
+            padding: 5px 8px;
+            font-size: 0.8rem;
+            color: #6b7280;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239ca3af'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 7px center;
+            padding-right: 22px;
+        }
+        .lang-select:hover { background-color: #f4f4f5; color: #18181b; border-color: #d1d5db; }
+
+        /* Translating spinner on bubble */
+        .bubble.translating::after {
+            content: ' ···';
+            color: #9ca3af;
+            font-size: 0.8em;
+            animation: ellipsis 1s infinite;
+        }
+        @keyframes ellipsis {
+            0%,100% { opacity: 0.3; } 50% { opacity: 1; }
+        }
+
         /* Scroll to top */
         #scrollTopBtn {
             position: fixed;
@@ -417,20 +537,46 @@
 
     <!-- Top bar -->
     <div class="topbar">
+        <a href="/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:#6b7280;font-size:0.8rem;margin-right:4px;transition:color 0.15s;" onmouseover="this.style.color='#18181b'" onmouseout="this.style.color='#6b7280'">
+            <i class="fas fa-arrow-left" style="font-size:0.75rem;"></i> Home
+        </a>
+        <div style="width:1px;height:18px;background:#e5e5e5;"></div>
         <div class="topbar-logo"><i class="fas fa-stethoscope"></i></div>
         <span class="topbar-title">MediBot</span>
         <span class="topbar-badge">Online</span>
         <div class="topbar-actions">
+            <select class="lang-select" id="langSelect" title="Language">
+                <option value="en">🌐 EN</option>
+                <option value="hi">🇮🇳 HI</option>
+                <option value="es">🇪🇸 ES</option>
+                <option value="fr">🇫🇷 FR</option>
+                <option value="ar">🇸🇦 AR</option>
+                <option value="zh">🇨🇳 ZH</option>
+            </select>
+            <button class="topbar-btn" id="searchToggleBtn" title="Search chat (Ctrl+F)">
+                <i class="fas fa-magnifying-glass"></i> <span data-i18n="search">Search</span>
+            </button>
+            <button class="topbar-btn" id="exportBtn">
+                <i class="fas fa-download"></i> <span data-i18n="export">Export</span>
+            </button>
             <button class="topbar-btn" id="clearChatBtn">
-                <i class="fas fa-rotate-left"></i> New chat
+                <i class="fas fa-rotate-left"></i> <span data-i18n="newChat">New chat</span>
             </button>
         </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar" id="searchBar">
+        <i class="fas fa-magnifying-glass" style="color:#9ca3af;font-size:13px;"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search messages...">
+        <span class="search-meta" id="searchMeta"></span>
+        <button class="search-close" id="searchClose"><i class="fas fa-xmark"></i></button>
     </div>
 
     <!-- Emergency strip -->
     <div class="emergency-strip">
         <i class="fas fa-triangle-exclamation"></i>
-        For emergencies call <strong>911</strong>. MediBot provides general information only — not medical advice.
+        <span data-i18n="emergency">For emergencies call <strong>102</strong>. MediBot provides general information only — not medical advice.</span>
     </div>
 
     <!-- Chat area -->
@@ -439,8 +585,8 @@
         <!-- Empty / welcome state -->
         <div class="empty-state" id="emptyState">
             <div class="empty-icon"><i class="fas fa-stethoscope"></i></div>
-            <h2>How can I help you today?</h2>
-            <p>Ask about symptoms, conditions, medications, or general health guidance.</p>
+            <h2 data-i18n="welcomeTitle">How can I help you today?</h2>
+            <p data-i18n="welcomeSub">Ask about symptoms, conditions, medications, or general health guidance.</p>
             <div class="chips">
                 <button class="chip" onclick="sendSuggestion('What is diabetes?')">What is diabetes?</button>
                 <button class="chip" onclick="sendSuggestion('Heart attack symptoms')">Heart attack symptoms</button>
@@ -467,8 +613,9 @@
     <!-- Input area -->
     <div class="input-area">
         <form id="msgForm">
-            <div class="input-box">
-                <textarea class="msg-input" id="msgInput" placeholder="Message MediBot..." rows="1" maxlength="500"></textarea>
+            <div class="input-box" style="position:relative;">
+                <div class="autocomplete" id="autocomplete"></div>
+                <textarea class="msg-input" id="msgInput" placeholder="Message MediBot..." data-i18n-placeholder="placeholder" rows="1" maxlength="500"></textarea>
                 <div class="input-footer">
                     <span class="char-count" id="charCount">0 / 500</span>
                     <button type="submit" class="send-btn" id="sendBtn">
@@ -508,6 +655,59 @@
                     chatArea.find('.message-row').remove();
                     emptyState.show();
                 });
+            });
+
+            // Autocomplete
+            const ac = $('#autocomplete');
+            let acActive = -1;
+            let acTimer;
+
+            msgInput.on('input.ac', function () {
+                clearTimeout(acTimer);
+                const val = $(this).val().trim();
+                if (val.length < 2) { ac.removeClass('open').empty(); return; }
+                acTimer = setTimeout(() => {
+                    $.get('/search', { q: val }, function (results) {
+                        ac.empty();
+                        if (!results.length) { ac.removeClass('open'); return; }
+                        results.forEach(r => {
+                            ac.append(`<div class="ac-item" data-val="${r}"><i class="fas fa-magnifying-glass"></i>${r}</div>`);
+                        });
+                        ac.addClass('open');
+                        acActive = -1;
+                    });
+                }, 200);
+            });
+
+            ac.on('click', '.ac-item', function () {
+                msgInput.val($(this).data('val'));
+                ac.removeClass('open').empty();
+                msgInput.focus();
+            });
+
+            msgInput.on('keydown.ac', function (e) {
+                const items = ac.find('.ac-item');
+                if (!ac.hasClass('open') || !items.length) return;
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    acActive = Math.min(acActive + 1, items.length - 1);
+                    items.removeClass('active').eq(acActive).addClass('active');
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    acActive = Math.max(acActive - 1, 0);
+                    items.removeClass('active').eq(acActive).addClass('active');
+                } else if (e.key === 'Enter' && acActive >= 0) {
+                    e.preventDefault();
+                    msgInput.val(items.eq(acActive).data('val'));
+                    ac.removeClass('open').empty();
+                    acActive = -1;
+                } else if (e.key === 'Escape') {
+                    ac.removeClass('open').empty();
+                }
+            });
+
+            $(document).on('click.ac', function (e) {
+                if (!$(e.target).closest('.input-box').length) ac.removeClass('open').empty();
             });
 
             // Textarea auto-resize + counter
@@ -578,7 +778,52 @@
                 `);
 
                 typingRow.before(row);
+
+                // Add follow-up chips for bot messages (not silent/history)
+                if (sender === 'bot' && !silent) {
+                    // Translate if non-English
+                    if (currentLang !== 'en') {
+                        const bubble = row.find('.bubble');
+                        const plainText = bubble.text().trim();
+                        bubble.data('original', plainText).addClass('translating');
+                        translateText(plainText, currentLang).then(translated => {
+                            bubble.removeClass('translating').text(translated);
+                        });
+                    } else {
+                        row.find('.bubble').data('original', row.find('.bubble').text().trim());
+                    }
+                    const chips = getFollowUps(content);
+                    if (chips.length) {
+                        const chipHtml = chips.map(c =>
+                            `<button class="followup-chip">${c}</button>`
+                        ).join('');
+                        const chipRow = $(`<div class="followup-chips">${chipHtml}</div>`);
+                        typingRow.before(chipRow);
+                    }
+                }
+
                 if (!silent) scrollBottom();
+            }
+
+            // Follow-up chip click
+            chatArea.on('click', '.followup-chip', function () {
+                const q = $(this).text();
+                $(this).closest('.followup-chips').remove();
+                sendMessage(q);
+            });
+
+            function getFollowUps(content) {
+                const c = content.toLowerCase();
+                if (c.includes('diabetes'))    return ['What causes diabetes?', 'Diabetes diet tips', 'Diabetes complications'];
+                if (c.includes('heart'))       return ['Heart attack warning signs', 'How to lower blood pressure', 'Heart-healthy diet'];
+                if (c.includes('anxiety') || c.includes('depression')) return ['Anxiety vs panic attack', 'When to see a therapist', 'Stress management tips'];
+                if (c.includes('vaccine') || c.includes('vaccination')) return ['Vaccine side effects', 'Adult vaccine schedule', 'Are vaccines safe?'];
+                if (c.includes('blood pressure') || c.includes('hypertension')) return ['Normal blood pressure range', 'Foods to avoid with hypertension', 'Blood pressure medications'];
+                if (c.includes('asthma'))      return ['Asthma triggers', 'Asthma vs COPD', 'Asthma inhalers explained'];
+                if (c.includes('cancer'))      return ['Cancer screening guidelines', 'Cancer warning signs', 'Cancer prevention tips'];
+                if (c.includes('sleep'))       return ['Sleep apnea symptoms', 'How to improve sleep', 'Insomnia causes'];
+                if (c.includes('pain'))        return ['When is pain serious?', 'Pain management options', 'When to see a doctor for pain'];
+                return ['Tell me more', 'What are the symptoms?', 'When should I see a doctor?'];
             }
 
             function formatMsg(text) {
@@ -624,7 +869,86 @@
             chatArea.on('scroll', function () {
                 scrollTopBtn.toggleClass('visible', chatArea.scrollTop() > 200);
             });
-            scrollTopBtn.on('click', () => chatArea.animate({ scrollTop: 0 }, 350));
+            // Export chat
+            $('#exportBtn').on('click', function () {
+                const lines = [];
+                chatArea.find('.message-row').each(function () {
+                    const sender = $(this).hasClass('user') ? 'You' : 'MediBot';
+                    const text = $(this).find('.bubble').clone()
+                        .find('strong').each(function(){ $(this).replaceWith($(this).text()); }).end()
+                        .text().trim();
+                    lines.push(sender + ':\n' + text + '\n');
+                });
+                if (!lines.length) return;
+                const blob = new Blob(['MediBot Chat Export\n\n' + lines.join('\n')], { type: 'text/plain' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'medibot-chat.txt';
+                a.click();
+            });
+
+        // Ctrl+K focuses input
+            document.addEventListener('keydown', function (e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    msgInput.focus();
+                }
+                // Ctrl+F opens search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    openSearch();
+                }
+                // Escape closes search
+                if (e.key === 'Escape') closeSearch();
+            });
+
+            // Search toggle
+            $('#searchToggleBtn').on('click', openSearch);
+            $('#searchClose').on('click', closeSearch);
+
+            function openSearch() {
+                $('#searchBar').addClass('open');
+                $('#searchInput').focus();
+            }
+
+            function closeSearch() {
+                $('#searchBar').removeClass('open');
+                $('#searchInput').val('');
+                $('#searchMeta').text('');
+                chatArea.find('.bubble').removeClass('highlight');
+            }
+
+            let matchIndex = 0;
+            let matches = [];
+
+            $('#searchInput').on('input', function () {
+                const q = $(this).val().trim().toLowerCase();
+                chatArea.find('.bubble').removeClass('highlight');
+                matches = [];
+                matchIndex = 0;
+                if (!q) { $('#searchMeta').text(''); return; }
+                chatArea.find('.bubble').each(function () {
+                    if ($(this).text().toLowerCase().includes(q)) {
+                        $(this).addClass('highlight');
+                        matches.push($(this));
+                    }
+                });
+                if (matches.length) {
+                    $('#searchMeta').text('1 of ' + matches.length);
+                    matches[0][0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    $('#searchMeta').text('No results');
+                }
+            });
+
+            // Enter to cycle through matches
+            $('#searchInput').on('keydown', function (e) {
+                if (e.key === 'Enter' && matches.length) {
+                    matchIndex = (matchIndex + 1) % matches.length;
+                    $('#searchMeta').text((matchIndex + 1) + ' of ' + matches.length);
+                    matches[matchIndex][0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
 
             msgInput.focus();
         });
@@ -632,6 +956,133 @@
         function sendSuggestion(msg) {
             $('#msgInput').val(msg).trigger('input');
             $('#msgForm').submit();
+        }
+
+        // ── i18n + Translation ──────────────────────────────────────
+        const I18N = {
+            en: {
+                welcomeTitle: 'How can I help you today?',
+                welcomeSub: 'Ask about symptoms, conditions, medications, or general health guidance.',
+                placeholder: 'Message MediBot...',
+                search: 'Search',
+                export: 'Export',
+                newChat: 'New chat',
+                emergency: 'For emergencies call <strong>102</strong>. MediBot provides general information only — not medical advice.',
+                translating: 'Translating...'
+            },
+            hi: {
+                welcomeTitle: 'आज मैं आपकी कैसे मदद कर सकता हूँ?',
+                welcomeSub: 'लक्षण, बीमारियाँ, दवाइयाँ या सामान्य स्वास्थ्य जानकारी के बारे में पूछें।',
+                placeholder: 'MediBot को संदेश भेजें...',
+                search: 'खोजें',
+                export: 'निर्यात',
+                newChat: 'नई चैट',
+                emergency: 'आपातकाल के लिए <strong>102</strong> पर कॉल करें। MediBot केवल सामान्य जानकारी प्रदान करता है।',
+                translating: 'अनुवाद हो रहा है...'
+            },
+            es: {
+                welcomeTitle: '¿Cómo puedo ayudarte hoy?',
+                welcomeSub: 'Pregunta sobre síntomas, enfermedades, medicamentos o salud general.',
+                placeholder: 'Escribe a MediBot...',
+                search: 'Buscar',
+                export: 'Exportar',
+                newChat: 'Nuevo chat',
+                emergency: 'Para emergencias llama al <strong>102</strong>. MediBot solo proporciona información general.',
+                translating: 'Traduciendo...'
+            },
+            fr: {
+                welcomeTitle: 'Comment puis-je vous aider aujourd\'hui ?',
+                welcomeSub: 'Posez des questions sur les symptômes, maladies, médicaments ou la santé générale.',
+                placeholder: 'Écrire à MediBot...',
+                search: 'Rechercher',
+                export: 'Exporter',
+                newChat: 'Nouveau chat',
+                emergency: 'Pour les urgences, appelez le <strong>102</strong>. MediBot fournit des informations générales uniquement.',
+                translating: 'Traduction...'
+            },
+            ar: {
+                welcomeTitle: 'كيف يمكنني مساعدتك اليوم؟',
+                welcomeSub: 'اسأل عن الأعراض والأمراض والأدوية أو الإرشادات الصحية العامة.',
+                placeholder: 'أرسل رسالة إلى MediBot...',
+                search: 'بحث',
+                export: 'تصدير',
+                newChat: 'محادثة جديدة',
+                emergency: 'للطوارئ اتصل بـ <strong>102</strong>. يقدم MediBot معلومات عامة فقط.',
+                translating: 'جارٍ الترجمة...'
+            },
+            zh: {
+                welcomeTitle: '今天我能帮您什么？',
+                welcomeSub: '询问症状、疾病、药物或一般健康指导。',
+                placeholder: '给 MediBot 发消息...',
+                search: '搜索',
+                export: '导出',
+                newChat: '新对话',
+                emergency: '紧急情况请拨打 <strong>102</strong>。MediBot 仅提供一般信息。',
+                translating: '翻译中...'
+            }
+        };
+
+        let currentLang = localStorage.getItem('medibot-lang') || 'en';
+
+        function applyLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('medibot-lang', lang);
+            const t = I18N[lang] || I18N.en;
+            // Update all data-i18n elements
+            $('[data-i18n]').each(function () {
+                const key = $(this).data('i18n');
+                if (t[key] !== undefined) $(this).html(t[key]);
+            });
+            // Update placeholders
+            $('[data-i18n-placeholder]').each(function () {
+                const key = $(this).data('i18n-placeholder');
+                if (t[key] !== undefined) $(this).attr('placeholder', t[key]);
+            });
+            // RTL for Arabic
+            $('body').attr('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        }
+
+        async function translateText(text, targetLang) {
+            if (targetLang === 'en') return text;
+            try {
+                const res = await fetch(
+                    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 500))}&langpair=en|${targetLang}`
+                );
+                const data = await res.json();
+                if (data.responseStatus === 200) return data.responseData.translatedText;
+            } catch (e) {}
+            return text; // fallback to original
+        }
+
+        // Init language
+        $('#langSelect').val(currentLang);
+        applyLang(currentLang);
+
+        $('#langSelect').on('change', async function () {
+            const lang = $(this).val();
+            applyLang(lang);
+            // Translate existing bot bubbles
+            if (lang !== 'en') {
+                const botBubbles = chatArea.find('.message-row.bot .bubble');
+                for (const el of botBubbles.toArray()) {
+                    const $el = $(el);
+                    const original = $el.data('original') || $el.text().trim();
+                    $el.data('original', original);
+                    $el.addClass('translating');
+                    const translated = await translateText(original, lang);
+                    $el.removeClass('translating').text(translated);
+                }
+            } else {
+                // Restore originals
+                chatArea.find('.message-row.bot .bubble').each(function () {
+                    const orig = $(this).data('original');
+                    if (orig) $(this).text(orig);
+                });
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
         }
     </script>
 </body>

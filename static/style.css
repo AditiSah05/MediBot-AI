@@ -35,25 +35,56 @@
 
 /* Print styles for medical information */
 @media print {
-    .chat-container {
-        box-shadow: none;
-        border: 1px solid #ccc;
+    * { box-shadow: none !important; animation: none !important; }
+
+    body { background: #fff; color: #000; font-family: Georgia, serif; }
+
+    /* Hide everything except messages */
+    .topbar, .emergency-strip, .input-area,
+    .empty-state, .typing-row, .msg-actions,
+    .followup-chips, .message-actions,
+    #scrollTopBtn, .search-bar { display: none !important; }
+
+    /* Print header */
+    .chat-area::before {
+        content: "MediBot — Chat Export";
+        display: block;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-bottom: 2px solid #000;
+        padding-bottom: 8px;
+        margin-bottom: 16px;
     }
-    
-    .chat-header,
-    .chat-footer,
-    .emergency-banner {
-        display: none;
+
+    .chat-area { padding: 0; overflow: visible; }
+
+    /* Show all messages cleanly */
+    .message-row { page-break-inside: avoid; margin-bottom: 14px; }
+    .message-row.user { align-items: flex-start; }
+
+    .message-row.user .bubble::before { content: "You: "; font-weight: bold; }
+    .message-row.bot  .bubble::before { content: "MediBot: "; font-weight: bold; }
+
+    .bubble {
+        background: none !important;
+        border: none !important;
+        color: #000 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        font-size: 10pt;
+        line-height: 1.5;
     }
-    
-    .message.user {
-        display: none;
-    }
-    
-    .message.bot .message-content {
-        border: none;
-        box-shadow: none;
-        margin-bottom: 20px;
+
+    .msg-time { color: #666; font-size: 8pt; }
+
+    /* Page footer */
+    @page {
+        margin: 2cm;
+        @bottom-center {
+            content: "MediBot — For educational purposes only. Not a substitute for medical advice.";
+            font-size: 8pt;
+            color: #666;
+        }
     }
 }
 

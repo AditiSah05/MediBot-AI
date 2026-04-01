@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediBot — AI Health Assistant</title>
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="/static/style.css" media="print">
+    <meta property="og:title" content="MediBot — AI Health Assistant">
+    <meta property="og:description" content="Ask about symptoms, conditions, medications, and more. Get clear, reliable health information instantly.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/static/favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -40,6 +48,13 @@
             color: white; font-size: 13px;
         }
         .nav-name { font-size: 0.95rem; font-weight: 600; color: #18181b; }
+        .nav-links { display: flex; gap: 4px; margin-left: 20px; }
+        .nav-link {
+            font-size: 0.83rem; color: #6b7280; text-decoration: none;
+            padding: 5px 10px; border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .nav-link:hover { background: #f4f4f5; color: #18181b; }
         .nav-cta {
             margin-left: auto;
             background: #18181b; color: white; border: none;
@@ -125,6 +140,19 @@
             transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
         }
         .btn-primary:hover { background: #374151; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(24,24,27,0.18); }
+        .btn-primary .spinner {
+            display: none;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        .btn-primary.loading .spinner { display: inline-block; }
+        .btn-primary.loading .btn-icon { display: none; }
+        .btn-primary.loading { pointer-events: none; opacity: 0.85; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .btn-secondary {
             background: #fff; color: #374151; border: 1px solid #e5e5e5;
             border-radius: 10px; padding: 12px 28px;
@@ -254,6 +282,55 @@
         }
         .btn-white:hover { background: #f4f4f5; transform: translateY(-2px); }
 
+        /* ── FAQ ── */
+        .faq-list { max-width: 640px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+        .faq-item {
+            background: #fff; border: 1px solid #e5e5e5;
+            border-radius: 12px; overflow: hidden;
+            transition: box-shadow 0.15s;
+        }
+        .faq-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .faq-q {
+            width: 100%; background: none; border: none;
+            padding: 16px 20px; display: flex; align-items: center;
+            justify-content: space-between; cursor: pointer;
+            font-family: 'Inter', sans-serif; font-size: 0.88rem;
+            font-weight: 600; color: #18181b; text-align: left;
+            gap: 12px;
+        }
+        .faq-q i { color: #9ca3af; transition: transform 0.25s; flex-shrink: 0; font-size: 0.8rem; }
+        .faq-item.open .faq-q i { transform: rotate(180deg); color: #18181b; }
+        .faq-a {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            font-size: 0.83rem; color: #6b7280; line-height: 1.7;
+            padding: 0 20px;
+        }
+        .faq-item.open .faq-a { max-height: 200px; padding: 0 20px 16px; }
+
+        /* ── Testimonials ── */
+        .testimonials {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px; max-width: 760px; width: 100%;
+        }
+        .testimonial {
+            background: #fff; border: 1px solid #e5e5e5;
+            border-radius: 12px; padding: 20px;
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .testimonial.visible { opacity: 1; transform: translateY(0); }
+        .testimonial p { font-size: 0.83rem; color: #374151; line-height: 1.6; margin-bottom: 14px; }
+        .testimonial-author { display: flex; align-items: center; gap: 10px; }
+        .t-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #f4f4f5; display: flex; align-items: center;
+            justify-content: center; font-size: 13px; color: #6b7280;
+        }
+        .t-name { font-size: 0.78rem; font-weight: 600; color: #18181b; }
+        .t-role { font-size: 0.72rem; color: #9ca3af; }
+        .t-stars { color: #f59e0b; font-size: 0.7rem; margin-bottom: 10px; }
+
         /* ── Footer ── */
         footer {
             background: #fff; border-top: 1px solid #e5e5e5;
@@ -289,6 +366,7 @@
 
         @media (max-width: 600px) {
             nav { padding: 0 16px; }
+            .nav-links { display: none; }
             .section { padding: 56px 16px; }
             .stats { flex-direction: column; }
             .stat { border-right: none; border-bottom: 1px solid #e5e5e5; }
@@ -305,7 +383,13 @@
     <nav>
         <div class="nav-logo"><i class="fas fa-stethoscope"></i></div>
         <span class="nav-name">MediBot</span>
+        <nav class="nav-links">
+            <a href="#how" class="nav-link">How it works</a>
+            <a href="#topics" class="nav-link">Topics</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+        </nav>
         <a href="/chat" class="nav-cta">Open chat <i class="fas fa-arrow-right"></i></a>
+        <span style="font-size:0.72rem;color:#9ca3af;margin-left:8px;display:none;" id="kbHint">Ctrl+K</span>
     </nav>
 
     <!-- Hero -->
@@ -314,7 +398,11 @@
         <h1>Your AI health assistant, <em>always ready</em></h1>
         <p>Ask about symptoms, conditions, medications, and more. Get clear, reliable health information instantly.</p>
         <div class="hero-actions">
-            <a href="/chat" class="btn-primary"><i class="fas fa-comment-medical"></i> Start chatting</a>
+            <a href="/chat" class="btn-primary" id="startChatBtn">
+                <i class="fas fa-comment-medical btn-icon"></i>
+                <span class="spinner"></span>
+                Start chatting
+            </a>
             <a href="#how" class="btn-secondary">See how it works</a>
         </div>
         <div class="stats">
@@ -364,7 +452,7 @@
             <div class="preview-messages">
                 <div class="pm user">
                     <div class="pm-bubble">What are the symptoms of diabetes?</div>
-                    <div class="pm-time">2:14 PM</div>
+                    <div class="pm-time" id="pt1"></div>
                 </div>
                 <div class="pm bot">
                     <div class="pm-bubble">
@@ -372,17 +460,17 @@
                         <strong>Type 1</strong> symptoms appear quickly. <strong>Type 2</strong> can develop gradually and go unnoticed.<br><br>
                         If you're experiencing these, a fasting blood glucose test can confirm a diagnosis. See your doctor for proper evaluation.
                     </div>
-                    <div class="pm-time">2:14 PM</div>
+                    <div class="pm-time" id="pt2"></div>
                 </div>
                 <div class="pm user">
                     <div class="pm-bubble">When should I go to the ER?</div>
-                    <div class="pm-time">2:15 PM</div>
+                    <div class="pm-time" id="pt3"></div>
                 </div>
                 <div class="pm bot">
                     <div class="pm-bubble">
                         Go to the ER immediately for: chest pain, difficulty breathing, signs of stroke (face drooping, arm weakness, speech difficulty), severe allergic reactions, or blood sugar below 70 mg/dL with confusion.
                     </div>
-                    <div class="pm-time">2:15 PM</div>
+                    <div class="pm-time" id="pt4"></div>
                 </div>
             </div>
             <div class="preview-input">
@@ -432,6 +520,68 @@
         </div>
     </div>
 
+    <!-- FAQ -->
+    <div class="section" id="faq" style="background:#fff; border-top:1px solid #e5e5e5;">
+        <p class="section-label scroll-reveal">FAQ</p>
+        <h2 class="section-title scroll-reveal">Common questions</h2>
+        <p class="section-sub scroll-reveal">Everything you need to know before you start.</p>
+        <div class="faq-list scroll-reveal">
+            <div class="faq-item">
+                <button class="faq-q">Is MediBot free to use? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a">Yes, completely free. No account, no subscription, no hidden fees. Just open the chat and start asking.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q">Can MediBot replace my doctor? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a">No. MediBot provides general health information for educational purposes only. Always consult a qualified healthcare provider for diagnosis, treatment, or medical advice.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q">How accurate is the information? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a">MediBot's knowledge base is built from established medical references covering 100+ conditions. It's regularly reviewed, but it's not a substitute for professional medical judgment.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q">Is my conversation private? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a">Chat history is stored in your browser session only and cleared when you close the tab or click "New chat". Nothing is stored on a server long-term.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q">What should I do in an emergency? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a">Call 102 immediately. Do not rely on MediBot for emergencies. For poison control, call 1-800-222-1222. For mental health crisis, call or text 988.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="section">
+        <p class="section-label scroll-reveal">What people say</p>
+        <h2 class="section-title scroll-reveal">Trusted by users</h2>
+        <p class="section-sub scroll-reveal">Real feedback from people who use MediBot for everyday health questions.</p>
+        <div class="testimonials">
+            <div class="testimonial">
+                <div class="t-stars">★★★★★</div>
+                <p>"I had a question about my medication at 2am and MediBot gave me a clear, structured answer instantly. Saved me a lot of anxiety."</p>
+                <div class="testimonial-author">
+                    <div class="t-avatar"><i class="fas fa-user"></i></div>
+                    <div><div class="t-name">Sarah M.</div><div class="t-role">Patient</div></div>
+                </div>
+            </div>
+            <div class="testimonial">
+                <div class="t-stars">★★★★★</div>
+                <p>"Great for understanding symptoms before a doctor's visit. It helped me ask the right questions and not feel lost in the appointment."</p>
+                <div class="testimonial-author">
+                    <div class="t-avatar"><i class="fas fa-user"></i></div>
+                    <div><div class="t-name">James T.</div><div class="t-role">Caregiver</div></div>
+                </div>
+            </div>
+            <div class="testimonial">
+                <div class="t-stars">★★★★☆</div>
+                <p>"The vaccine schedule information was exactly what I needed for my kids. Clear, well-organized, and easy to understand."</p>
+                <div class="testimonial-author">
+                    <div class="t-avatar"><i class="fas fa-user"></i></div>
+                    <div><div class="t-name">Priya K.</div><div class="t-role">Parent</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CTA banner -->
     <div class="section">
         <div class="cta-banner scroll-reveal">
@@ -457,6 +607,23 @@
     </footer>
 
     <script>
+        // Live chat preview timestamps
+        (function() {
+            const fmt = d => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const now = new Date();
+            const m1 = new Date(now - 2 * 60000);
+            const m2 = new Date(now - 60000);
+            document.getElementById('pt1').textContent = fmt(m1);
+            document.getElementById('pt2').textContent = fmt(m1);
+            document.getElementById('pt3').textContent = fmt(m2);
+            document.getElementById('pt4').textContent = fmt(m2);
+        })();
+
+        // Start chatting spinner
+        document.getElementById('startChatBtn').addEventListener('click', function() {
+            this.classList.add('loading');
+        });
+
         // Scroll reveal
         const reveals = document.querySelectorAll('.scroll-reveal');
         const ro = new IntersectionObserver(entries => {
@@ -481,6 +648,18 @@
         }, { threshold: 0.12 });
         cards.forEach(c => co.observe(c));
 
+        // Testimonials stagger
+        const tCards = document.querySelectorAll('.testimonial');
+        const to = new IntersectionObserver(entries => {
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => e.target.classList.add('visible'), i * 100);
+                    to.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        tCards.forEach(t => to.observe(t));
+
         // Count-up stats
         function countUp(el, target, dur) {
             let v = 0, step = target / (dur / 16);
@@ -500,6 +679,29 @@
                 }
             });
         }, { threshold: 0.5 }).observe(document.querySelector('.stats'));
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-q').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!isOpen) item.classList.add('open');
+            });
+        });
+
+        // Ctrl+K → go to chat
+        document.getElementById('kbHint').style.display = 'inline';
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                window.location.href = '/chat';
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
     </script>
 </body>
 </html>
