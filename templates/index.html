@@ -3,337 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediBot - AI Health Assistant</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+    <title>MediBot — AI Health Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --primary-color: #2c5aa0;
-            --secondary-color: #4a90e2;
-            --success-color: #28a745;
-            --medical-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
-
-        .hero-section {
+            background: #f7f7f8;
+            color: #1a1a1a;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+        }
+
+        /* Nav */
+        nav {
+            height: 56px;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
             align-items: center;
-            padding: 40px 0;
+            padding: 0 32px;
+            gap: 10px;
         }
 
-        .hero-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero-header {
-            background: var(--medical-gradient);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .hero-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
+        .nav-logo {
+            width: 30px;
+            height: 30px;
+            background: #18181b;
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            margin: 0 auto 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-
-        .hero-body {
-            padding: 40px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.1);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--medical-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
             color: white;
-            margin: 0 auto 15px;
+            font-size: 13px;
         }
 
-        .feature-title {
-            font-size: 1.1rem;
+        .nav-name {
+            font-size: 0.95rem;
             font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
+            color: #18181b;
         }
 
-        .feature-description {
-            font-size: 0.9rem;
-            color: #6c757d;
-            line-height: 1.5;
-        }
-
-        .cta-section {
-            text-align: center;
-            padding: 30px;
-            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-            border-radius: 15px;
-            margin-top: 30px;
-        }
-
-        .cta-button {
-            background: var(--primary-color);
+        .nav-cta {
+            margin-left: auto;
+            background: #18181b;
             color: white;
-            padding: 15px 40px;
             border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: 8px;
+            padding: 7px 18px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
             text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
+        }
+
+        .nav-cta:hover { background: #374151; }
+
+        /* Hero */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 24px 40px;
+            text-align: center;
+        }
+
+        .hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
+            gap: 6px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            margin-bottom: 24px;
         }
 
-        .cta-button:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(44, 90, 160, 0.4);
-            color: white;
-            text-decoration: none;
+        .hero-badge span {
+            width: 6px;
+            height: 6px;
+            background: #16a34a;
+            border-radius: 50%;
+            display: inline-block;
         }
 
-        .disclaimer {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .stats-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .stat-number {
-            font-size: 2rem;
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
             font-weight: 700;
-            color: var(--primary-color);
+            color: #18181b;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            max-width: 640px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            color: #6b7280;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #6b7280;
+            max-width: 460px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 56px;
+        }
+
+        .btn-primary {
+            background: #18181b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 28px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+
+        .btn-primary:hover { background: #374151; }
+
+        .btn-secondary {
+            background: #fff;
+            color: #374151;
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 12px 28px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+
+        .btn-secondary:hover { background: #f4f4f5; border-color: #d1d5db; }
+
+        /* Stats row */
+        .stats {
+            display: flex;
+            gap: 0;
+            border: 1px solid #e5e5e5;
+            border-radius: 14px;
+            background: #fff;
+            overflow: hidden;
+            margin-bottom: 64px;
+        }
+
+        .stat {
+            flex: 1;
+            padding: 20px 28px;
+            text-align: center;
+            border-right: 1px solid #e5e5e5;
+        }
+
+        .stat:last-child { border-right: none; }
+
+        .stat-num {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #18181b;
             display: block;
+            line-height: 1;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 5px;
+            font-size: 0.78rem;
+            color: #9ca3af;
         }
 
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-            
-            .hero-header,
-            .hero-body {
-                padding: 30px 20px;
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
+        /* Features grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            max-width: 860px;
+            width: 100%;
+            margin-bottom: 64px;
+        }
+
+        .feature-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            transition: box-shadow 0.15s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            background: #f4f4f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #18181b;
+            margin-bottom: 4px;
+        }
+
+        .feature-card p {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.35); }
+            50%       { box-shadow: 0 0 0 6px rgba(22,163,74,0); }
+        }
+
+        @keyframes navSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nav entrance */
+        nav { animation: navSlide 0.4s ease both; }
+
+        /* Hero stagger */
+        .hero-badge   { animation: fadeUp 0.5s ease 0.1s both; }
+        .hero h1      { animation: fadeUp 0.5s ease 0.2s both; }
+        .hero > p     { animation: fadeUp 0.5s ease 0.3s both; }
+        .hero-actions { animation: fadeUp 0.5s ease 0.4s both; }
+        .stats        { animation: fadeUp 0.5s ease 0.5s both; }
+
+        /* Badge dot pulse */
+        .hero-badge { animation: fadeUp 0.5s ease 0.1s both, badgePulse 2.4s ease 1s infinite; }
+
+        /* Button lift on hover */
+        .btn-primary  { transition: background 0.15s, transform 0.15s, box-shadow 0.15s; }
+        .btn-primary:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(24,24,27,0.18); }
+        .btn-secondary { transition: all 0.15s, transform 0.15s; }
+        .btn-secondary:hover { transform: translateY(-2px); }
+
+        /* Feature cards — hidden until scroll triggers */
+        .feature-card {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.15s;
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+        }
+
+        /* Feature icon hover spin */
+        .feature-card:hover .feature-icon i {
+            animation: iconSpin 0.4s ease;
+        }
+
+        @keyframes iconSpin {
+            0%   { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(-12deg) scale(1.15); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        /* Nav CTA arrow slide */
+        .nav-cta { overflow: hidden; position: relative; }
+        .nav-cta i { transition: transform 0.2s ease; }
+        .nav-cta:hover i { transform: translateX(3px); }
+
+        /* Disclaimer */
+        .disclaimer {
+            max-width: 560px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #9ca3af;
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        .disclaimer a { color: #6b7280; }
+
+        @media (max-width: 600px) {
+            nav { padding: 0 16px; }
+            .hero { padding: 48px 16px 32px; }
+            .stats { flex-direction: column; }
+            .stat { border-right: none; border-bottom: 1px solid #e5e5e5; }
+            .stat:last-child { border-bottom: none; }
         }
     </style>
 </head>
-
 <body>
-    <div class="hero-section">
-        <div class="container">
-            <div class="hero-card">
-                <div class="hero-header">
-                    <div class="hero-icon">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <h1 class="hero-title">MediBot AI</h1>
-                    <p class="hero-subtitle">Your Intelligent Health Information Assistant</p>
-                </div>
 
-                <div class="hero-body">
-                    <div class="stats-section">
-                        <div class="stat-item">
-                            <span class="stat-number">{{ condition_count }}+</span>
-                            <div class="stat-label">Medical Conditions</div>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">24/7</span>
-                            <div class="stat-label">Available</div>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">100%</span>
-                            <div class="stat-label">Free to Use</div>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">AI</span>
-                            <div class="stat-label">Powered</div>
-                        </div>
-                    </div>
+    <nav>
+        <div class="nav-logo"><i class="fas fa-stethoscope"></i></div>
+        <span class="nav-name">MediBot</span>
+        <a href="/chat" class="nav-cta">Open chat <i class="fas fa-arrow-right"></i></a>
+    </nav>
 
-                    <div class="feature-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-heartbeat"></i>
-                            </div>
-                            <div class="feature-title">Comprehensive Health Info</div>
-                            <div class="feature-description">
-                                Get detailed information about 80+ medical conditions, symptoms, and treatments
-                            </div>
-                        </div>
+    <div class="hero">
 
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-ambulance"></i>
-                            </div>
-                            <div class="feature-title">Emergency Guidance</div>
-                            <div class="feature-description">
-                                Learn when to seek immediate medical attention and emergency procedures
-                            </div>
-                        </div>
+        <div class="hero-badge">
+            <span></span> Available 24/7
+        </div>
 
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="feature-title">Prevention Tips</div>
-                            <div class="feature-description">
-                                Discover preventive care strategies, vaccination schedules, and wellness advice
-                            </div>
-                        </div>
+        <h1>Your AI health assistant, <em>always ready</em></h1>
+        <p>Ask about symptoms, conditions, medications, and more. Get clear, reliable health information instantly.</p>
 
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <div class="feature-title">Mental Health Support</div>
-                            <div class="feature-description">
-                                Access mental health resources, crisis support, and wellness strategies
-                            </div>
-                        </div>
+        <div class="hero-actions">
+            <a href="/chat" class="btn-primary">
+                <i class="fas fa-comment-medical"></i> Start chatting
+            </a>
+            <a href="#features" class="btn-secondary">
+                See what it covers
+            </a>
+        </div>
 
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-pills"></i>
-                            </div>
-                            <div class="feature-title">Medication Safety</div>
-                            <div class="feature-description">
-                                Learn about proper medication usage, interactions, and safety guidelines
-                            </div>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <div class="feature-title">Lifestyle Medicine</div>
-                            <div class="feature-description">
-                                Get guidance on nutrition, exercise, sleep, and healthy living practices
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="cta-section">
-                        <h3 style="color: var(--primary-color); margin-bottom: 15px;">
-                            <i class="fas fa-comments"></i> Start Your Health Consultation
-                        </h3>
-                        <p style="margin-bottom: 25px; color: #6c757d;">
-                            Ask about symptoms, conditions, treatments, or general health advice
-                        </p>
-                        <a href="/chat" class="cta-button">
-                            <i class="fas fa-comment-medical"></i>
-                            Start Chatting Now
-                        </a>
-                    </div>
-
-                    <div class="disclaimer">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Medical Disclaimer:</strong> This AI assistant provides general health information for educational purposes only. 
-                        It is not a substitute for professional medical advice, diagnosis, or treatment. 
-                        Always consult qualified healthcare providers for medical concerns and emergencies.
-                    </div>
-                </div>
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-num">{{ condition_count }}+</span>
+                <div class="stat-label">Conditions covered</div>
+            </div>
+            <div class="stat">
+                <span class="stat-num">24/7</span>
+                <div class="stat-label">Always available</div>
+            </div>
+            <div class="stat">
+                <span class="stat-num">Free</span>
+                <div class="stat-label">No sign-up needed</div>
+            </div>
+            <div class="stat">
+                <span class="stat-num">Fast</span>
+                <div class="stat-label">Instant answers</div>
             </div>
         </div>
+
+        <div class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-heart-pulse"></i></div>
+                <h3>Conditions & Symptoms</h3>
+                <p>Detailed info on 100+ medical conditions, causes, and what to watch for.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-syringe"></i></div>
+                <h3>Vaccines & Prevention</h3>
+                <p>Schedules, safety info, and guidance on immunizations for all ages.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                <h3>Mental Health</h3>
+                <p>Resources for anxiety, depression, stress, and crisis support lines.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-triangle-exclamation"></i></div>
+                <h3>Emergency Guidance</h3>
+                <p>Know when to call 911, first aid steps, and urgent care signs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-pills"></i></div>
+                <h3>Medications</h3>
+                <p>Drug safety, interactions, dosage guidance, and proper usage tips.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-leaf"></i></div>
+                <h3>Lifestyle & Wellness</h3>
+                <p>Nutrition, sleep, exercise, and preventive care recommendations.</p>
+            </div>
+        </div>
+
+        <p class="disclaimer">
+            MediBot provides general health information for educational purposes only.
+            It is not a substitute for professional medical advice, diagnosis, or treatment.
+            Always consult a qualified healthcare provider for medical concerns.
+        </p>
+
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scroll-triggered feature cards with stagger
+        const cards = document.querySelectorAll('.feature-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        cards.forEach(c => observer.observe(c));
+
+        // Count-up for numeric stats
+        function countUp(el, target, duration) {
+            let start = 0;
+            const step = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += step;
+                if (start >= target) { el.textContent = target + '+'; clearInterval(timer); return; }
+                el.textContent = Math.floor(start) + '+';
+            }, 16);
+        }
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const nums = entry.target.querySelectorAll('.stat-num');
+                    nums.forEach(n => {
+                        const raw = parseInt(n.textContent);
+                        if (!isNaN(raw)) countUp(n, raw, 900);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        statsObserver.observe(document.querySelector('.stats'));
+    </script>
 </body>
 </html>
