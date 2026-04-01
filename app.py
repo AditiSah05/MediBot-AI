@@ -1,8 +1,11 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session
 import os
 import re
+import html
+import secrets
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(32)
 
 # Comprehensive medical knowledge base with extensive health information
 medical_responses = {
@@ -941,7 +944,7 @@ Ask me anything about health conditions, treatments, medications, or emergency c
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template('index.html', condition_count=len(medical_responses))
 
 @app.route("/chat")
 def chat_page():
@@ -949,12 +952,37 @@ def chat_page():
 
 @app.route("/get", methods=["GET", "POST"])
 def chat():
-    msg = request.form["msg"]
+    msg = request.form.get("msg", "").strip()
+    if not msg:
+        return "Please enter a message.", 400
+
+    # Sanitize input
+    msg = html.escape(msg)[:500]
 
     # Get medical response
     response = get_medical_response(msg)
 
+    # Store in session history
+    if 'history' not in session:
+        session['history'] = []
+    session['history'].append({'role': 'user', 'text': msg})
+    session['history'].append({'role': 'bot', 'text': response})
+    session.modified = True
+
     return response
+
+@app.route("/history", methods=["GET"])
+def history():
+    return jsonify(session.get('history', []))
+
+@app.route("/clear", methods=["POST"])
+def clear_history():
+    session.pop('history', None)
+    return jsonify({'status': 'ok'})
+
+@app.route("/health")
+def health():
+    return jsonify({'status': 'ok', 'conditions': len(medical_responses)})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)

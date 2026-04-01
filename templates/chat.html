@@ -112,10 +112,13 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            background: #fafbfc;
+            background: var(--chat-bg);
+            background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+            background-size: 24px 24px;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            transition: background 0.3s;
         }
 
         .welcome-message {
@@ -420,6 +423,87 @@
         .message-content strong {
             color: var(--primary-color);
         }
+
+        /* Message actions (copy + feedback) */
+        .message-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .action-btn.copied {
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .action-btn.liked {
+            color: var(--success-color);
+            border-color: var(--success-color);
+            background: #e8f5e9;
+        }
+
+        .action-btn.disliked {
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+            background: #fdecea;
+        }
+
+        /* Scroll to top button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        #scrollTopBtn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        #scrollTopBtn.visible {
+            display: flex;
+        }
     </style>
 </head>
 
@@ -441,6 +525,9 @@
                     <p>Your Personal Health Information Assistant</p>
                 </div>
                 <div class="status-indicator"></div>
+                <button id="clearChatBtn" title="Clear chat" aria-label="Clear chat history" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:8px;padding:6px 12px;font-size:0.8rem;cursor:pointer;margin-left:10px;transition:background 0.2s;">
+                    <i class="fas fa-trash-alt"></i> Clear
+                </button>
             </div>
 
             <!-- Chat Body -->
@@ -503,6 +590,11 @@
         </div>
     </div>
 
+    <!-- Scroll to top button -->
+    <button id="scrollTopBtn" title="Scroll to top" aria-label="Scroll to top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
@@ -515,6 +607,26 @@
             const messageInput = $('#messageInput');
             const sendButton = $('#sendButton');
             const typingIndicator = $('#typingIndicator');
+
+            // Load chat history from session
+            $.get('/history', function(history) {
+                history.forEach(function(entry) {
+                    const timestamp = '';
+                    if (entry.role === 'user') {
+                        addMessage(entry.text, 'user', timestamp, true);
+                    } else {
+                        addMessage(entry.text, 'bot', timestamp, true);
+                    }
+                });
+                if (history.length > 0) scrollToBottom();
+            });
+
+            // Clear chat button
+            $('#clearChatBtn').on('click', function() {
+                $.post('/clear', function() {
+                    chatBody.find('.message').remove();
+                });
+            });
 
             // Auto-resize textarea
             messageInput.on('input', function() {
@@ -567,20 +679,37 @@
             }
 
             // Add message to chat
-            function addMessage(content, sender, timestamp) {
+            function addMessage(content, sender, timestamp, silent) {
+                const actions = sender === 'bot' ? `
+                    <div class="message-actions">
+                        <button class="action-btn copy-btn" title="Copy to clipboard">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="action-btn feedback-btn" data-value="up" title="Helpful">
+                            <i class="fas fa-thumbs-up"></i>
+                        </button>
+                        <button class="action-btn feedback-btn" data-value="down" title="Not helpful">
+                            <i class="fas fa-thumbs-down"></i>
+                        </button>
+                    </div>` : '';
+
+                const timeHtml = timestamp ? `<span class="message-time">${timestamp}</span>` : '';
+                const animStyle = silent ? 'style="animation:none"' : '';
+
                 const messageHtml = `
-                    <div class="message ${sender}">
+                    <div class="message ${sender}" ${animStyle}>
                         ${sender === 'bot' ? '<div class="message-avatar"><i class="fas fa-user-md"></i></div>' : ''}
                         <div class="message-content">
                             ${formatMessage(content)}
-                            <span class="message-time">${timestamp}</span>
+                            ${timeHtml}
+                            ${actions}
                         </div>
                         ${sender === 'user' ? '<div class="message-avatar"><i class="fas fa-user"></i></div>' : ''}
                     </div>
                 `;
-                
+
                 chatBody.append(messageHtml);
-                scrollToBottom();
+                if (!silent) scrollToBottom();
             }
 
             // Format message content
@@ -633,6 +762,45 @@
                     e.preventDefault();
                     messageForm.submit();
                 }
+            });
+
+            // Copy button handler
+            chatBody.on('click', '.copy-btn', function() {
+                const btn = $(this);
+                const text = btn.closest('.message-content').clone()
+                    .find('.message-time, .message-actions').remove().end()
+                    .text().trim();
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.addClass('copied').html('<i class="fas fa-check"></i> Copied');
+                    setTimeout(() => btn.removeClass('copied').html('<i class="fas fa-copy"></i> Copy'), 2000);
+                });
+            });
+
+            // Feedback button handler
+            chatBody.on('click', '.feedback-btn', function() {
+                const btn = $(this);
+                const group = btn.closest('.message-actions').find('.feedback-btn');
+                group.removeClass('liked disliked');
+                if (btn.data('value') === 'up') {
+                    btn.addClass('liked');
+                } else {
+                    btn.addClass('disliked');
+                }
+                group.prop('disabled', true);
+            });
+
+            // Scroll to top button
+            const scrollTopBtn = $('#scrollTopBtn');
+            chatBody.on('scroll', function() {
+                if (chatBody.scrollTop() > 200) {
+                    scrollTopBtn.addClass('visible');
+                } else {
+                    scrollTopBtn.removeClass('visible');
+                }
+            });
+
+            scrollTopBtn.on('click', function() {
+                chatBody.animate({ scrollTop: 0 }, 400);
             });
 
             // Focus on input when page loads
