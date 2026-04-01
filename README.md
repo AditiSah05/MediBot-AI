@@ -2,16 +2,19 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-latest-green.svg)](https://flask.palletsprojects.com/)
+[![Deployed on Render](https://img.shields.io/badge/Render-deployed-46E3B7.svg)](https://medibot-ai-5e3j.onrender.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An AI health information assistant built with Flask. Ask about symptoms, conditions, medications, vaccines, and more — instantly, for free.
+
+**Live:** [https://medibot-ai-5e3j.onrender.com](https://medibot-ai-5e3j.onrender.com/)
 
 ---
 
 ## Quick start
 
 ```bash
-pip install flask
+pip install -r requirements.txt
 python app.py
 ```
 
@@ -64,6 +67,10 @@ Open `http://localhost:8080`.
 
 ```
 app.py                  # Flask app — routes + knowledge base
+requirements.txt        # Python dependencies
+Dockerfile              # Docker image definition
+render.yaml             # Render deployment blueprint
+docker-compose.yml      # Local Docker Compose config
 templates/
   index.html            # Landing page
   chat.html             # Chat interface
@@ -76,7 +83,42 @@ static/
   icon-192.svg          # PWA icon
   icon-512.svg          # PWA splash icon
   robots.txt            # Crawler rules
-Medical-Chatbot-master/ # Original RAG-based implementation
+```
+
+---
+
+## Deploy to Render
+
+1. Push your code to GitHub
+2. Go to [render.com](https://render.com) → **New +** → **Web Service**
+3. Connect your repo (settings auto-detected from `render.yaml`)
+4. Leave **Root Directory** empty
+5. Click **Create Web Service**
+
+The app will be live at `https://<your-service>.onrender.com`.
+
+---
+
+## Deploy with Docker
+
+```bash
+docker build -t medibot .
+docker run -p 8080:8080 medibot
+```
+
+Or via Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+---
+
+## Production
+
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:8080 app:app
 ```
 
 ---
@@ -92,15 +134,6 @@ Respiratory · Cardiovascular · Endocrine · Gastrointestinal · Mental Health 
 - Emergency: **102**
 - Poison Control: 1-800-222-1222
 - Mental health crisis: **988**
-
----
-
-## Production
-
-```bash
-pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:8080 app:app
-```
 
 ---
 
