@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -18,7 +19,7 @@
             flex-direction: column;
         }
 
-        /* Nav */
+        /* ── Nav ── */
         nav {
             height: 56px;
             background: #fff;
@@ -27,445 +28,478 @@
             align-items: center;
             padding: 0 32px;
             gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: navSlide 0.4s ease both;
         }
-
         .nav-logo {
-            width: 30px;
-            height: 30px;
-            background: #18181b;
-            border-radius: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 13px;
+            width: 30px; height: 30px;
+            background: #18181b; border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 13px;
         }
-
-        .nav-name {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #18181b;
-        }
-
+        .nav-name { font-size: 0.95rem; font-weight: 600; color: #18181b; }
         .nav-cta {
             margin-left: auto;
-            background: #18181b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 7px 18px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            font-family: 'Inter', sans-serif;
-            transition: background 0.15s;
+            background: #18181b; color: white; border: none;
+            border-radius: 8px; padding: 7px 18px;
+            font-size: 0.85rem; font-weight: 500; cursor: pointer;
+            text-decoration: none; font-family: 'Inter', sans-serif;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: background 0.15s, transform 0.15s;
         }
-
-        .nav-cta:hover { background: #374151; }
-
-        /* Hero */
-        .hero {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 64px 24px 40px;
-            text-align: center;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #15803d;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 0.78rem;
-            font-weight: 500;
-            margin-bottom: 24px;
-        }
-
-        .hero-badge span {
-            width: 6px;
-            height: 6px;
-            background: #16a34a;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            font-weight: 700;
-            color: #18181b;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-            max-width: 640px;
-            margin-bottom: 16px;
-        }
-
-        .hero h1 em {
-            font-style: normal;
-            color: #6b7280;
-        }
-
-        .hero p {
-            font-size: 1rem;
-            color: #6b7280;
-            max-width: 460px;
-            line-height: 1.7;
-            margin-bottom: 36px;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 56px;
-        }
-
-        .btn-primary {
-            background: #18181b;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 28px;
-            font-size: 0.92rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            font-family: 'Inter', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.15s;
-        }
-
-        .btn-primary:hover { background: #374151; }
-
-        .btn-secondary {
-            background: #fff;
-            color: #374151;
-            border: 1px solid #e5e5e5;
-            border-radius: 10px;
-            padding: 12px 28px;
-            font-size: 0.92rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            font-family: 'Inter', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.15s;
-        }
-
-        .btn-secondary:hover { background: #f4f4f5; border-color: #d1d5db; }
-
-        /* Stats row */
-        .stats {
-            display: flex;
-            gap: 0;
-            border: 1px solid #e5e5e5;
-            border-radius: 14px;
-            background: #fff;
-            overflow: hidden;
-            margin-bottom: 64px;
-        }
-
-        .stat {
-            flex: 1;
-            padding: 20px 28px;
-            text-align: center;
-            border-right: 1px solid #e5e5e5;
-        }
-
-        .stat:last-child { border-right: none; }
-
-        .stat-num {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #18181b;
-            display: block;
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 0.78rem;
-            color: #9ca3af;
-        }
-
-        /* Features grid */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-            max-width: 860px;
-            width: 100%;
-            margin-bottom: 64px;
-        }
-
-        .feature-card {
-            background: #fff;
-            border: 1px solid #e5e5e5;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: left;
-            transition: box-shadow 0.15s;
-        }
-
-        .feature-card:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-        }
-
-        .feature-icon {
-            width: 36px;
-            height: 36px;
-            background: #f4f4f5;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            color: #374151;
-            margin-bottom: 12px;
-        }
-
-        .feature-card h3 {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: #18181b;
-            margin-bottom: 4px;
-        }
-
-        .feature-card p {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            line-height: 1.5;
-        }
-
-        /* ── Animations ── */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(22px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-
-        @keyframes badgePulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.35); }
-            50%       { box-shadow: 0 0 0 6px rgba(22,163,74,0); }
-        }
-
-        @keyframes navSlide {
-            from { opacity: 0; transform: translateY(-10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Nav entrance */
-        nav { animation: navSlide 0.4s ease both; }
-
-        /* Hero stagger */
-        .hero-badge   { animation: fadeUp 0.5s ease 0.1s both; }
-        .hero h1      { animation: fadeUp 0.5s ease 0.2s both; }
-        .hero > p     { animation: fadeUp 0.5s ease 0.3s both; }
-        .hero-actions { animation: fadeUp 0.5s ease 0.4s both; }
-        .stats        { animation: fadeUp 0.5s ease 0.5s both; }
-
-        /* Badge dot pulse */
-        .hero-badge { animation: fadeUp 0.5s ease 0.1s both, badgePulse 2.4s ease 1s infinite; }
-
-        /* Button lift on hover */
-        .btn-primary  { transition: background 0.15s, transform 0.15s, box-shadow 0.15s; }
-        .btn-primary:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(24,24,27,0.18); }
-        .btn-secondary { transition: all 0.15s, transform 0.15s; }
-        .btn-secondary:hover { transform: translateY(-2px); }
-
-        /* Feature cards — hidden until scroll triggers */
-        .feature-card {
-            opacity: 0;
-            transform: translateY(18px);
-            transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.15s;
-        }
-
-        .feature-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .feature-card:hover {
-            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
-            transform: translateY(-3px);
-        }
-
-        /* Feature icon hover spin */
-        .feature-card:hover .feature-icon i {
-            animation: iconSpin 0.4s ease;
-        }
-
-        @keyframes iconSpin {
-            0%   { transform: rotate(0deg) scale(1); }
-            50%  { transform: rotate(-12deg) scale(1.15); }
-            100% { transform: rotate(0deg) scale(1); }
-        }
-
-        /* Nav CTA arrow slide */
-        .nav-cta { overflow: hidden; position: relative; }
-        .nav-cta i { transition: transform 0.2s ease; }
+        .nav-cta:hover { background: #374151; transform: translateY(-1px); }
+        .nav-cta i { transition: transform 0.2s; }
         .nav-cta:hover i { transform: translateX(3px); }
 
-        /* Disclaimer */
-        .disclaimer {
-            max-width: 560px;
-            text-align: center;
-            font-size: 0.78rem;
-            color: #9ca3af;
-            line-height: 1.6;
-            padding-bottom: 40px;
+        /* ── Section wrapper ── */
+        .section { padding: 80px 24px; display: flex; flex-direction: column; align-items: center; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+            text-transform: uppercase; color: #9ca3af; margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700;
+            color: #18181b; letter-spacing: -0.02em; text-align: center;
+            margin-bottom: 10px;
+        }
+        .section-sub {
+            font-size: 0.92rem; color: #6b7280; text-align: center;
+            max-width: 440px; line-height: 1.7; margin-bottom: 48px;
         }
 
-        .disclaimer a { color: #6b7280; }
+        /* ── Hero ── */
+        .hero {
+            padding: 80px 24px 64px;
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            background: #fff; border-bottom: 1px solid #e5e5e5;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #f0fdf4; border: 1px solid #bbf7d0;
+            color: #15803d; border-radius: 20px;
+            padding: 4px 12px; font-size: 0.78rem; font-weight: 500;
+            margin-bottom: 24px;
+            animation: fadeUp 0.5s ease 0.1s both, badgePulse 2.4s ease 1s infinite;
+        }
+        .hero-badge span {
+            width: 6px; height: 6px; background: #16a34a;
+            border-radius: 50%; display: inline-block;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700;
+            color: #18181b; line-height: 1.15; letter-spacing: -0.02em;
+            max-width: 640px; margin-bottom: 16px;
+            animation: fadeUp 0.5s ease 0.2s both;
+        }
+        .hero h1 em { font-style: normal; color: #6b7280; }
+        .hero > p {
+            font-size: 1rem; color: #6b7280; max-width: 460px;
+            line-height: 1.7; margin-bottom: 36px;
+            animation: fadeUp 0.5s ease 0.3s both;
+        }
+        .hero-actions {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            justify-content: center; margin-bottom: 56px;
+            animation: fadeUp 0.5s ease 0.4s both;
+        }
+        .stats {
+            display: flex; border: 1px solid #e5e5e5;
+            border-radius: 14px; background: #f7f7f8; overflow: hidden;
+            animation: fadeUp 0.5s ease 0.5s both;
+        }
+        .stat { flex: 1; padding: 20px 28px; text-align: center; border-right: 1px solid #e5e5e5; }
+        .stat:last-child { border-right: none; }
+        .stat-num { font-size: 1.6rem; font-weight: 700; color: #18181b; display: block; line-height: 1; margin-bottom: 4px; }
+        .stat-label { font-size: 0.78rem; color: #9ca3af; }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: #18181b; color: white; border: none;
+            border-radius: 10px; padding: 12px 28px;
+            font-size: 0.92rem; font-weight: 500; cursor: pointer;
+            text-decoration: none; font-family: 'Inter', sans-serif;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-primary:hover { background: #374151; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(24,24,27,0.18); }
+        .btn-secondary {
+            background: #fff; color: #374151; border: 1px solid #e5e5e5;
+            border-radius: 10px; padding: 12px 28px;
+            font-size: 0.92rem; font-weight: 500; cursor: pointer;
+            text-decoration: none; font-family: 'Inter', sans-serif;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.15s, transform 0.15s;
+        }
+        .btn-secondary:hover { background: #f4f4f5; border-color: #d1d5db; transform: translateY(-2px); }
+
+        /* ── How it works ── */
+        .steps {
+            display: flex; gap: 0; max-width: 760px; width: 100%;
+            position: relative;
+        }
+        .steps::before {
+            content: '';
+            position: absolute; top: 28px; left: calc(16.6% + 14px);
+            right: calc(16.6% + 14px); height: 1px;
+            background: #e5e5e5; z-index: 0;
+        }
+        .step { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 12px; position: relative; z-index: 1; }
+        .step-num {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: #18181b; color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 600; margin-bottom: 14px;
+            border: 3px solid #f7f7f8;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .step:hover .step-num { transform: scale(1.12); box-shadow: 0 4px 16px rgba(24,24,27,0.2); }
+        .step h3 { font-size: 0.88rem; font-weight: 600; color: #18181b; margin-bottom: 6px; }
+        .step p  { font-size: 0.78rem; color: #9ca3af; line-height: 1.5; }
+
+        /* ── Chat preview ── */
+        .chat-preview {
+            background: #fff; border: 1px solid #e5e5e5;
+            border-radius: 16px; max-width: 560px; width: 100%;
+            overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+        }
+        .preview-topbar {
+            background: #f7f7f8; border-bottom: 1px solid #e5e5e5;
+            padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .preview-title { font-size: 0.8rem; font-weight: 600; color: #374151; margin-left: 4px; }
+        .preview-messages { padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; }
+        .pm { display: flex; flex-direction: column; }
+        .pm.user { align-items: flex-end; }
+        .pm.bot  { align-items: flex-start; }
+        .pm-bubble {
+            padding: 10px 14px; border-radius: 12px;
+            font-size: 0.83rem; line-height: 1.5; max-width: 85%;
+        }
+        .pm.user .pm-bubble { background: #18181b; color: #fff; border-bottom-right-radius: 3px; }
+        .pm.bot  .pm-bubble { background: #f4f4f5; color: #374151; border-bottom-left-radius: 3px; }
+        .pm-time { font-size: 0.68rem; color: #9ca3af; margin-top: 3px; padding: 0 2px; }
+        .preview-input {
+            border-top: 1px solid #e5e5e5; padding: 12px 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .preview-input-box {
+            flex: 1; background: #f7f7f8; border: 1px solid #e5e5e5;
+            border-radius: 8px; padding: 8px 12px;
+            font-size: 0.8rem; color: #9ca3af;
+        }
+        .preview-send {
+            width: 30px; height: 30px; background: #18181b;
+            border-radius: 7px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 11px;
+        }
+
+        /* ── Topics ── */
+        .topics-section { background: #fff; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+        .topic-pills {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; max-width: 720px;
+        }
+        .topic-pill {
+            background: #f4f4f5; border: 1px solid #e5e5e5;
+            border-radius: 20px; padding: 6px 14px;
+            font-size: 0.8rem; color: #374151;
+            display: inline-flex; align-items: center; gap: 6px;
+            cursor: pointer; text-decoration: none;
+            transition: all 0.15s;
+        }
+        .topic-pill:hover { background: #18181b; color: #fff; border-color: #18181b; transform: translateY(-2px); }
+        .topic-pill i { font-size: 0.75rem; }
+
+        /* ── Features ── */
+        .features {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px; max-width: 860px; width: 100%;
+        }
+        .feature-card {
+            background: #fff; border: 1px solid #e5e5e5;
+            border-radius: 12px; padding: 20px; text-align: left;
+            opacity: 0; transform: translateY(18px);
+            transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.15s;
+        }
+        .feature-card.visible { opacity: 1; transform: translateY(0); }
+        .feature-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); transform: translateY(-3px); }
+        .feature-card:hover .feature-icon i { animation: iconSpin 0.4s ease; }
+        .feature-icon {
+            width: 36px; height: 36px; background: #f4f4f5;
+            border-radius: 8px; display: flex; align-items: center;
+            justify-content: center; font-size: 15px; color: #374151; margin-bottom: 12px;
+        }
+        .feature-card h3 { font-size: 0.88rem; font-weight: 600; color: #18181b; margin-bottom: 4px; }
+        .feature-card p  { font-size: 0.8rem; color: #9ca3af; line-height: 1.5; }
+
+        /* ── CTA banner ── */
+        .cta-banner {
+            background: #18181b; border-radius: 16px;
+            padding: 48px 32px; text-align: center;
+            max-width: 640px; width: 100%;
+        }
+        .cta-banner h2 { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: -0.02em; }
+        .cta-banner p  { font-size: 0.9rem; color: #9ca3af; margin-bottom: 28px; line-height: 1.6; }
+        .btn-white {
+            background: #fff; color: #18181b; border: none;
+            border-radius: 10px; padding: 12px 28px;
+            font-size: 0.92rem; font-weight: 600; cursor: pointer;
+            text-decoration: none; font-family: 'Inter', sans-serif;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.15s;
+        }
+        .btn-white:hover { background: #f4f4f5; transform: translateY(-2px); }
+
+        /* ── Footer ── */
+        footer {
+            background: #fff; border-top: 1px solid #e5e5e5;
+            padding: 28px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+        }
+        .footer-left { display: flex; align-items: center; gap: 8px; }
+        .footer-logo {
+            width: 24px; height: 24px; background: #18181b;
+            border-radius: 5px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 10px;
+        }
+        .footer-name { font-size: 0.85rem; font-weight: 600; color: #18181b; }
+        .footer-copy { font-size: 0.75rem; color: #9ca3af; }
+        .footer-links { display: flex; gap: 16px; }
+        .footer-links a { font-size: 0.78rem; color: #6b7280; text-decoration: none; transition: color 0.15s; }
+        .footer-links a:hover { color: #18181b; }
+        .back-top {
+            font-size: 0.78rem; color: #6b7280; text-decoration: none;
+            display: flex; align-items: center; gap: 4px; transition: color 0.15s;
+        }
+        .back-top:hover { color: #18181b; }
+
+        /* ── Animations ── */
+        @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes badgePulse { 0%,100% { box-shadow:0 0 0 0 rgba(22,163,74,.35); } 50% { box-shadow:0 0 0 6px rgba(22,163,74,0); } }
+        @keyframes navSlide { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes iconSpin { 0% { transform:rotate(0) scale(1); } 50% { transform:rotate(-12deg) scale(1.15); } 100% { transform:rotate(0) scale(1); } }
+
+        .scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
 
         @media (max-width: 600px) {
             nav { padding: 0 16px; }
-            .hero { padding: 48px 16px 32px; }
+            .section { padding: 56px 16px; }
             .stats { flex-direction: column; }
             .stat { border-right: none; border-bottom: 1px solid #e5e5e5; }
             .stat:last-child { border-bottom: none; }
+            .steps { flex-direction: column; gap: 28px; }
+            .steps::before { display: none; }
+            footer { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Nav -->
     <nav>
         <div class="nav-logo"><i class="fas fa-stethoscope"></i></div>
         <span class="nav-name">MediBot</span>
         <a href="/chat" class="nav-cta">Open chat <i class="fas fa-arrow-right"></i></a>
     </nav>
 
+    <!-- Hero -->
     <div class="hero">
-
-        <div class="hero-badge">
-            <span></span> Available 24/7
-        </div>
-
+        <div class="hero-badge"><span></span> Available 24/7</div>
         <h1>Your AI health assistant, <em>always ready</em></h1>
         <p>Ask about symptoms, conditions, medications, and more. Get clear, reliable health information instantly.</p>
-
         <div class="hero-actions">
-            <a href="/chat" class="btn-primary">
-                <i class="fas fa-comment-medical"></i> Start chatting
-            </a>
-            <a href="#features" class="btn-secondary">
-                See what it covers
-            </a>
+            <a href="/chat" class="btn-primary"><i class="fas fa-comment-medical"></i> Start chatting</a>
+            <a href="#how" class="btn-secondary">See how it works</a>
         </div>
-
         <div class="stats">
-            <div class="stat">
-                <span class="stat-num">{{ condition_count }}+</span>
-                <div class="stat-label">Conditions covered</div>
-            </div>
-            <div class="stat">
-                <span class="stat-num">24/7</span>
-                <div class="stat-label">Always available</div>
-            </div>
-            <div class="stat">
-                <span class="stat-num">Free</span>
-                <div class="stat-label">No sign-up needed</div>
-            </div>
-            <div class="stat">
-                <span class="stat-num">Fast</span>
-                <div class="stat-label">Instant answers</div>
-            </div>
+            <div class="stat"><span class="stat-num">{{ condition_count }}+</span><div class="stat-label">Conditions covered</div></div>
+            <div class="stat"><span class="stat-num">24/7</span><div class="stat-label">Always available</div></div>
+            <div class="stat"><span class="stat-num">Free</span><div class="stat-label">No sign-up needed</div></div>
+            <div class="stat"><span class="stat-num">Fast</span><div class="stat-label">Instant answers</div></div>
         </div>
-
-        <div class="features" id="features">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-heart-pulse"></i></div>
-                <h3>Conditions & Symptoms</h3>
-                <p>Detailed info on 100+ medical conditions, causes, and what to watch for.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-syringe"></i></div>
-                <h3>Vaccines & Prevention</h3>
-                <p>Schedules, safety info, and guidance on immunizations for all ages.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-brain"></i></div>
-                <h3>Mental Health</h3>
-                <p>Resources for anxiety, depression, stress, and crisis support lines.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-triangle-exclamation"></i></div>
-                <h3>Emergency Guidance</h3>
-                <p>Know when to call 911, first aid steps, and urgent care signs.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-pills"></i></div>
-                <h3>Medications</h3>
-                <p>Drug safety, interactions, dosage guidance, and proper usage tips.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-leaf"></i></div>
-                <h3>Lifestyle & Wellness</h3>
-                <p>Nutrition, sleep, exercise, and preventive care recommendations.</p>
-            </div>
-        </div>
-
-        <p class="disclaimer">
-            MediBot provides general health information for educational purposes only.
-            It is not a substitute for professional medical advice, diagnosis, or treatment.
-            Always consult a qualified healthcare provider for medical concerns.
-        </p>
-
     </div>
 
+    <!-- How it works -->
+    <div class="section" id="how">
+        <p class="section-label scroll-reveal">How it works</p>
+        <h2 class="section-title scroll-reveal">Three steps to an answer</h2>
+        <p class="section-sub scroll-reveal">No sign-up, no waiting. Just type and get reliable health information.</p>
+        <div class="steps scroll-reveal">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Type your question</h3>
+                <p>Ask anything — a symptom, condition, medication, or general health topic.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Get an instant answer</h3>
+                <p>MediBot searches its knowledge base and returns clear, structured information.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Know what to do next</h3>
+                <p>Understand your options — whether to monitor, visit a doctor, or call 911.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat preview -->
+    <div class="section" style="background:#fff; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;">
+        <p class="section-label scroll-reveal">See it in action</p>
+        <h2 class="section-title scroll-reveal">What a conversation looks like</h2>
+        <p class="section-sub scroll-reveal">Real responses from MediBot — clear, structured, and actionable.</p>
+        <div class="chat-preview scroll-reveal">
+            <div class="preview-topbar">
+                <div class="preview-dot" style="background:#ef4444"></div>
+                <div class="preview-dot" style="background:#f59e0b"></div>
+                <div class="preview-dot" style="background:#22c55e"></div>
+                <span class="preview-title">MediBot</span>
+            </div>
+            <div class="preview-messages">
+                <div class="pm user">
+                    <div class="pm-bubble">What are the symptoms of diabetes?</div>
+                    <div class="pm-time">2:14 PM</div>
+                </div>
+                <div class="pm bot">
+                    <div class="pm-bubble">
+                        Diabetes symptoms include increased thirst and urination, fatigue, blurred vision, and slow-healing wounds.<br><br>
+                        <strong>Type 1</strong> symptoms appear quickly. <strong>Type 2</strong> can develop gradually and go unnoticed.<br><br>
+                        If you're experiencing these, a fasting blood glucose test can confirm a diagnosis. See your doctor for proper evaluation.
+                    </div>
+                    <div class="pm-time">2:14 PM</div>
+                </div>
+                <div class="pm user">
+                    <div class="pm-bubble">When should I go to the ER?</div>
+                    <div class="pm-time">2:15 PM</div>
+                </div>
+                <div class="pm bot">
+                    <div class="pm-bubble">
+                        Go to the ER immediately for: chest pain, difficulty breathing, signs of stroke (face drooping, arm weakness, speech difficulty), severe allergic reactions, or blood sugar below 70 mg/dL with confusion.
+                    </div>
+                    <div class="pm-time">2:15 PM</div>
+                </div>
+            </div>
+            <div class="preview-input">
+                <div class="preview-input-box">Ask a health question...</div>
+                <div class="preview-send"><i class="fas fa-arrow-up"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topics -->
+    <div class="section topics-section" id="topics">
+        <p class="section-label scroll-reveal">Topics</p>
+        <h2 class="section-title scroll-reveal">What you can ask about</h2>
+        <p class="section-sub scroll-reveal">From everyday questions to complex conditions — MediBot covers it all.</p>
+        <div class="topic-pills scroll-reveal">
+            <a href="/chat" class="topic-pill"><i class="fas fa-heart-pulse"></i> Heart Health</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-brain"></i> Mental Health</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-syringe"></i> Vaccines</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-lungs"></i> Respiratory</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-bone"></i> Bones & Joints</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-pills"></i> Medications</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-triangle-exclamation"></i> Emergencies</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-venus"></i> Women's Health</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-mars"></i> Men's Health</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-child"></i> Pediatrics</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-eye"></i> Eye & Ear</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-leaf"></i> Wellness</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-virus"></i> Infections</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-droplet"></i> Diabetes</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-moon"></i> Sleep</a>
+            <a href="/chat" class="topic-pill"><i class="fas fa-utensils"></i> Nutrition</a>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="section" id="features">
+        <p class="section-label scroll-reveal">Features</p>
+        <h2 class="section-title scroll-reveal">Everything in one place</h2>
+        <p class="section-sub scroll-reveal">Comprehensive health information across every major category.</p>
+        <div class="features">
+            <div class="feature-card"><div class="feature-icon"><i class="fas fa-heart-pulse"></i></div><h3>Conditions & Symptoms</h3><p>Detailed info on 100+ medical conditions, causes, and what to watch for.</p></div>
+            <div class="feature-card"><div class="feature-icon"><i class="fas fa-syringe"></i></div><h3>Vaccines & Prevention</h3><p>Schedules, safety info, and guidance on immunizations for all ages.</p></div>
+            <div class="feature-card"><div class="feature-icon"><i class="fas fa-brain"></i></div><h3>Mental Health</h3><p>Resources for anxiety, depression, stress, and crisis support lines.</p></div>
+            <div class="feature-card"><div class="feature-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Emergency Guidance</h3><p>Know when to call 911, first aid steps, and urgent care signs.</p></div>
+            <div class="feature-card"><div class="feature-icon"><i class="fas fa-pills"></i></div><h3>Medications</h3><p>Drug safety, interactions, dosage guidance, and proper usage tips.</p></div>
+            <div class="feature-card"><div class="feature-icon"><i class="fas fa-leaf"></i></div><h3>Lifestyle & Wellness</h3><p>Nutrition, sleep, exercise, and preventive care recommendations.</p></div>
+        </div>
+    </div>
+
+    <!-- CTA banner -->
+    <div class="section">
+        <div class="cta-banner scroll-reveal">
+            <h2>Ready to get started?</h2>
+            <p>Ask your first health question — no account, no cost, no waiting.</p>
+            <a href="/chat" class="btn-white"><i class="fas fa-comment-medical"></i> Start chatting now</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            <div class="footer-logo"><i class="fas fa-stethoscope"></i></div>
+            <span class="footer-name">MediBot</span>
+            <span class="footer-copy">— for educational purposes only</span>
+        </div>
+        <div class="footer-links">
+            <a href="/chat">Chat</a>
+            <a href="#how">How it works</a>
+            <a href="#topics">Topics</a>
+        </div>
+        <a href="#" class="back-top"><i class="fas fa-arrow-up"></i> Back to top</a>
+    </footer>
+
     <script>
-        // Scroll-triggered feature cards with stagger
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.scroll-reveal');
+        const ro = new IntersectionObserver(entries => {
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => e.target.classList.add('visible'), i * 60);
+                    ro.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        reveals.forEach(r => ro.observe(r));
+
+        // Feature cards stagger
         const cards = document.querySelectorAll('.feature-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
-                    observer.unobserve(entry.target);
+        const co = new IntersectionObserver(entries => {
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => e.target.classList.add('visible'), i * 80);
+                    co.unobserve(e.target);
                 }
             });
         }, { threshold: 0.12 });
-        cards.forEach(c => observer.observe(c));
+        cards.forEach(c => co.observe(c));
 
-        // Count-up for numeric stats
-        function countUp(el, target, duration) {
-            let start = 0;
-            const step = target / (duration / 16);
-            const timer = setInterval(() => {
-                start += step;
-                if (start >= target) { el.textContent = target + '+'; clearInterval(timer); return; }
-                el.textContent = Math.floor(start) + '+';
+        // Count-up stats
+        function countUp(el, target, dur) {
+            let v = 0, step = target / (dur / 16);
+            const t = setInterval(() => {
+                v += step;
+                if (v >= target) { el.textContent = target + '+'; clearInterval(t); return; }
+                el.textContent = Math.floor(v) + '+';
             }, 16);
         }
-
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const nums = entry.target.querySelectorAll('.stat-num');
-                    nums.forEach(n => {
+        new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.querySelectorAll('.stat-num').forEach(n => {
                         const raw = parseInt(n.textContent);
                         if (!isNaN(raw)) countUp(n, raw, 900);
                     });
-                    statsObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.5 });
-        statsObserver.observe(document.querySelector('.stats'));
+        }, { threshold: 0.5 }).observe(document.querySelector('.stats'));
     </script>
 </body>
 </html>
